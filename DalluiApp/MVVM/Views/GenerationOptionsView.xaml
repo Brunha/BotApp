@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DalluiApp.MVVM.Views.GenerationOptionsView"
+             Title="GenerationOptionsView">
+    <!--                 BackgroundColor="#101216"  Applied in styles   -->
+    
+    <Grid Margin="25, 25, 0, 0"
+      RowDefinitions=".2*, .1*, .1*, .3*, .2*, .1*">
+        <!--    creation of the titles  -->
+        <VerticalStackLayout VerticalOptions="Center">
+            <Label FontFamily="NexaHeavy"
+                   FontSize="30"
+                   Text="Select Options"
+                   Style="{StaticResource LblTitle}"/>
+            <!--    Removing TextColor="White", apply style -->
+            <Label Margin="0, 10, 0, 0"
+                   FontSize="20"
+                   Text="Minimum of 6 options"
+                   Style="{StaticResource LblSubTitle}"/>
+            <!--    Removing TextColor="#ACB1BB" apply style -->
+        </VerticalStackLayout>
+
+        <!--    Creation of option sections-->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Options}">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="10"
+                                   Orientation="Horizontal"/>
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid HeightRequest="50"
+                          WidthRequest="150">
+                        <RoundRectangle CornerRadius="35" Fill="#242529"/>
+                        <Label Text="{Binding .}"
+                               HorizontalOptions="Center"
+                               TextColor="White"
+                               VerticalOptions="Center"
+                               FontFamily="NexaLight"/>
+
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+
+        <Label Grid.Row="2"
+               FontFamily="NexaHeavy"
+               FontSize="20"
+               Text="Choose a style of picture"
+               Style="{StaticResource LblTitle}"
+               VerticalOptions="Center"/>
+
+        <!--    Create a class to show a collectiView of images -->
+
+        <CollectionView Grid.Row="3"
+                        ItemsSource="{Binding Styles}"
+                        SelectionMode="Single">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="10"
+                                   Orientation="Horizontal"/>
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Border StrokeShape="RoundRectangle 20, 20 ,20 ,20" StrokeThickness="0">
+                            <Image Source="{Binding ImageUrl}"/>
+                        </Border>
+                        <Label Margin="0,0,0,10"
+                               FontFamily="NexaHeavy"
+                               FontSize="15"
+                               HorizontalOptions="Center"
+                               Text="{Binding Name}"
+                               TextColor="White"
+                               VerticalOptions="End">
+                            <Label.Shadow>
+                                <Shadow Brush="black"
+                                        Opacity=".8"
+                                        Radius="1"
+                                        Offset="5,5"/>
+                            </Label.Shadow>
+                        </Label>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+        <!--    Creating a discription area -->
+        <Border Grid.Row="4"
+                Margin="0, 15, 25, 0"
+                BackgroundColor="#242529"
+                StrokeShape="RoundRectangle 20, 20, 20, 20"
+                StrokeThickness="0">
+            <Editor Margin="5"
+                    BackgroundColor="#242529"
+                    TextColor="White"/>
+
+        </Border>
+        
+        <!--    Creating the button in the end of the layout    -->
+        <Button Grid.Row="5"
+                BackgroundColor="#98C0FE"
+                CornerRadius="25"
+                FontFamily="NexaHeavy"
+                FontSize="16"
+                HorizontalOptions="Center"
+                Text="Generate"
+                TextColor="Black"
+                VerticalOptions="Center"
+                Command="{Binding GenerateImageCommand}"/>
+
+    </Grid>
+</ContentPage>

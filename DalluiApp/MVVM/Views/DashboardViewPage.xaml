@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DalluiApp.MVVM.Views.DashboardViewPage"
+             Title="DashboardViewPage"
+             xmlns:cards="clr-namespace:PanCardView;assembly=PanCardView"
+             xmlns:proc="clr-namespace:PanCardView.Processors;assembly=PanCardView"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:acrylicview="clr-namespace:Sharpnado.MaterialFrame;assembly=Maui.MaterialFrame">
+    <!--                 BackgroundColor="#101216"  Applied in styles   -->
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:ListToStringConverter x:Key="ListToStringConverter"
+                                           Separator=","/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+    <!--    Creating the main frame of the View -->
+    <Grid Margin="25, 25, 0, 0"
+      RowDefinitions=".1*, .2*, .15*, .45*, .1*">
+        
+        <!--    First and upper part of the View (menu aspect and profile image -->
+        <Grid Margin="0,0,25,0"
+              ColumnDefinitions="*,*">
+            <VerticalStackLayout VerticalOptions="Center">
+                                 <Rectangle HeightRequest="2"
+                                            HorizontalOptions="Start"
+                                            WidthRequest="25"/>
+                <!--    Fill="#CACDD3" removed from the rectangle and applied with a style -->
+                <!--    Using simple rectangle to simulate some kind of menu shortcut   -->
+                <Rectangle
+                    Margin="0,0,5,0"
+           HeightRequest="2"
+           HorizontalOptions="Start"
+           WidthRequest="35"/>
+                <!--    Fill="#CACDD3" removed from the rectangle and applied with a style -->
+            </VerticalStackLayout>
+            
+            <!--    Using a bordr to create a proflie image, with mode border manipulation than using Frame -->
+
+            <Border Grid.Column="1"
+                    HeightRequest="75"
+                    HorizontalOptions="End"
+                    StrokeShape="RoundRectangle 80, 80, 80, 80"
+                    WidthRequest="75">
+                <Image Aspect="AspectFill"
+                       HeightRequest="100"
+                       HorizontalOptions="Center"
+                       Source="profilesquare.jpg"
+                       WidthRequest="100"/>
+
+            </Border>
+        </Grid>
+
+        <!--    Set the titles  -->
+        <VerticalStackLayout Grid.Row="1"
+                             VerticalOptions="Center">
+            <Label FontSize="30"
+                   FontFamily="Nexa-Heavy"
+                   Text="Create incredible universes"
+                   Style="{StaticResource LblTitle}"/>
+
+            <Label FontSize="20"
+                   FontFamily="Nexa-Heavy"
+                   Margin="0, 10, 0, 0"
+                   Text="Join your friends."
+                   Style="{StaticResource LblSubTitle}"/>
+        </VerticalStackLayout>
+        
+        <!--    Other profiles section, using a collectionView for the data -->
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Profiles}"
+                        VerticalOptions="Center">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="10"
+                                   Orientation="Horizontal"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <!-- Creating the background first and the 'card' display -->
+                    <Grid ColumnDefinitions=".35*, .65*"
+                          HeightRequest="60"
+                          WidthRequest="160">
+                        <RoundRectangle Grid.ColumnSpan="2"
+                                        CornerRadius="45"/>
+                        <Border Grid.RowSpan="2"
+                                Margin="5,0,0,0"
+                                HeightRequest="50"
+                                HorizontalOptions="Start"
+                                StrokeShape="RoundRectangle 80,80,80,80"
+                                StrokeThickness="0"
+                                WidthRequest="50">
+                            <Image HeightRequest="50"
+                                   Source="{Binding ProfileImage}"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1"
+                                             VerticalOptions="Center">
+                            <Label Margin="10,0,0,0"
+                                   FontFamily="NexaHeavy"
+                                   HorizontalTextAlignment="Start"
+                                   Text="{Binding Name}"
+                                   TextColor="White"
+                                   VerticalTextAlignment="Center"/>
+                            <Label Grid.Column="1"
+                                   Margin="10,0,0,0"
+                                   FontFamily="NexaHeavy"
+                                   FontSize="12"
+                                   Text="{Binding NoPhotos, StringFormat='{0} pictures'}"
+                                   TextColor="#869CBD"
+                                   VerticalOptions="Center"/>
+
+                        </VerticalStackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+        <!--    Creating Card View section  -->
+        <cards:CoverFlowView Grid.Row="3"
+                             Margin="-25, 0, 30, 0"
+                             ItemsSource="{Binding GeneratedImages}"
+                             PositionShiftValue="110">
+            <x:Arguments>
+                <proc:CoverFlowProcessor OpacityFactor="0.20"
+                                         ScaleFactor="0.75"/>
+            </x:Arguments>
+
+            <cards:CoverFlowView.ItemTemplate>
+                <DataTemplate>
+                    <Border StrokeShape="RoundRectangle 40, 40, 40, 40"
+                            StrokeThickness="0">
+                        <Grid RowDefinitions=".7*, .3*">
+                            <Image Grid.RowSpan="2"
+                                   Aspect="AspectFill"
+                                   Source="{Binding ImagePath}"/>
+                            <acrylicview:MaterialFrame Grid.Row="1">
+                            <!--<Grid Grid.Row="1">
+                                <Rectangle Fill="Black"
+                                           Opacity=".5"
+                                           StrokeThickness="0"/>-->
+                                <VerticalStackLayout Margin="10, 0, 0, 0"
+                                                     VerticalOptions="Center">
+                                    <Label FontFamily="NexaHeavy"
+                                           FontSize="15"
+                                           Text="{Binding MainKeyword}"
+                                           TextColor="White"/>
+                                    <Label FontFamily="NexaLight"
+                                           FontSize="15"
+                                           Text="{Binding Keywords,Converter={StaticResource ListToStringConverter}}"
+                                           TextColor="White">
+                                        <Label.Shadow>
+                                            <Shadow Brush="lightgray"
+                                                Opacity=".4"
+                                                Radius="5"
+                                                Offset="5,5"/>          
+                                        </Label.Shadow>
+                                    </Label>
+                                </VerticalStackLayout>
+
+                            </acrylicview:MaterialFrame>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </cards:CoverFlowView.ItemTemplate>
+        </cards:CoverFlowView>
+
+        <!--    Creating the end button -->
+        <Border Grid.Row="4"
+                Margin="0, 15, 0, 0"
+                HorizontalOptions="End"
+                StrokeShape="RoundRectangle 55, 0, 0, 0"
+                WidthRequest="250">
+            <Button BackgroundColor="#E8FF8E"
+                    FontFamily="NexaHeavy"
+                    FontSize="16"
+                    Text="Create new Image"
+                    TextColor="#101216"
+                    Command="{Binding NextPageCommand}"/>
+        </Border>
+    </Grid>
+</ContentPage>

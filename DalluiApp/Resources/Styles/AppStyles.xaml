@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:sharpnado="clr-namespace:Sharpnado.MaterialFrame;assembly=Maui.MaterialFrame">
+
+    <!--    Creating a style for the dark and light theme. Need to apply ApplyToDerivedTypes="True" for its derivated types be also apllied -->
+    <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Dark={StaticResource bgDarkTheme}, Light={StaticResource bgLightTheme}}"/>
+    </Style>
+
+    <Style TargetType="Rectangle" ApplyToDerivedTypes="False">
+        <Setter Property="Fill" Value="{AppThemeBinding Dark={StaticResource DarkModeRectangleMenu}, Light={StaticResource LightModeRectangleMenu}}"/>
+    </Style>
+
+    <Style TargetType="RoundRectangle" ApplyToDerivedTypes="False">
+        <Setter Property="Fill" Value="{AppThemeBinding Dark={StaticResource DarkModeRoundRectangleCardDisplay}, Light={StaticResource LightModeRoundRectangleCardDisplay}}"/>
+    </Style>
+
+    <Style TargetType="Label" x:Key="LblTitle">
+        <Setter Property="TextColor" Value="{AppThemeBinding Dark={StaticResource DarkThemeTitle}, Light={StaticResource LightThemeTitle}}"/>
+    </Style>
+
+    <Style TargetType="Label" x:Key="LblSubTitle">
+        <Setter Property="TextColor" Value="{AppThemeBinding Dark={StaticResource DarkThemeSubTitle}, Light={StaticResource LightThemeSubTitle}}"/>
+    </Style>
+
+    <Style TargetType="sharpnado:MaterialFrame">
+        <Setter Property="MaterialTheme" Value="AcrylicBlur"/>
+        <Setter Property="MaterialBlurStyle" Value="Dark"/>
+    </Style>
+
+    <!--<Style TargetType="Rectangle" ApplyToDerivedTypes="True">
+        <Setter Property="Fill" Value="{AppThemeBinding Dark={StaticResource RectangleDark}, Light={StaticResource RectangleLight}}"/>
+    </Style>-->
+</ResourceDictionary>
