@@ -1,0 +1,1604 @@
+SECTION 26: UI CHALLENGES WITH SOURCE CODE
+
+284	-	Dallui App Screen One
+
+	-	Creating a new Project Called DalluiApp. Creating a Views Folder with a contentPage called DashboardView.
+
+	-	In the App cs, Set the MainPage to the DashboardView:
+
+	 MainPage = new DashboardView();
+
+	-	For the first part of the application, in the DashboardView:          BackgroundColor="#101216">
+
+<!--    Creating the main frame of the View -->
+<Grid Margin="25, 25, 0, 0"
+  RowDefinitions=".1*, .2*, .15*, .45*, .1*">
+    
+    <!--    First and upper part of the View (menu aspect and profile image -->
+    <Grid Margin="0,0,25,0"
+          ColumnDefinitions="*,*">
+        <VerticalStackLayout VerticalOptions="Center">
+                             <Rectangle Fill="#CACDD3"
+                                        HeightRequest="2"
+                                        HorizontalOptions="Start"
+                                        WidthRequest="25"/>
+
+            <!--    Using simple rectangle to simulate some kind of menu shortcut   -->
+            <Rectangle
+                Margin="0,0,5,0"
+                Fill="#CACDD3"
+       HeightRequest="2"
+       HorizontalOptions="Start"
+       WidthRequest="35"/>
+        </VerticalStackLayout>
+        
+        <!--    Using a border to create a proflie image, with mode border manipulation than using Frame -->
+
+        <Border Grid.Column="1"
+                HeightRequest="75"
+                HorizontalOptions="End"
+                StrokeShape="RoundRectangle 80, 80, 80, 80"
+                WidthRequest="75">
+            <Image Aspect="AspectFill"
+                   HeightRequest="100"
+                   HorizontalOptions="Center"
+                   Source="profilesquare.jpg"
+                   WidthRequest="100"/>
+
+        </Border>
+    </Grid>
+
+    <!--    Set the titles  -->
+    <VerticalStackLayout Grid.Row="1"
+                         VerticalOptions="Center">
+        <Label FontSize="30"
+               FontFamily="Nexa-Heavy"
+               Text="Create incredible universes"
+               TextColor="White"/>
+
+        <Label FontSize="20"
+               FontFamily="Nexa-Heavy"
+               Margin="0, 10, 0, 0"
+               Text="Join your friends."
+               TextColor="#ACB1BB"/>
+    </VerticalStackLayout>
+    
+    <!--    Other profiles section  -->
+    <CollectionView Grid.Row="2"
+                    ItemsSource="{Binding Profiles}"
+                    VerticalOptions="Center">
+        
+    </CollectionView>
+
+    {....}
+
+    -	Adding image resources to the application, aslong the fonts. For the fonts, in the MauiProgram file add:
+
+            var builder = MauiApp.CreateBuilder();
+            builder
+                .UseMauiApp<App>()
+                .ConfigureFonts(fonts =>
+                {
+                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                    fonts.AddFont("Nexa - ExtraLight.ttf", "NexaExtraLight");
+                    fonts.AddFont("Nexa-Heavy.ttf", "NexaHeavy");
+                });
+
+    -	Create Models folder, and in it, create a profile class:
+
+        public class Profile
+    {
+        public string ProfileImage { get; set; }
+        public string Name { get; set; }
+
+        public int NoPhotos { get; set; }
+
+    -	And also create a class GeneratedImage for the application of images in the next step:
+
+        public class GeneratedImage
+    {
+        public string ImagePath { get; set; }
+        public string MainKeyword { get; set; }
+        public List<string> Keywords { get; set; }
+    }
+
+	-	After the creating of classes, in the DashboardView code beind, make an instance of them and populate them with some information:
+
+	public ObservableCollection<Profile> Profiles { get; set; }
+
+public ObservableCollection<GeneratedImage> GeneratedImages { get; set; }
+public DashboardViewPage()
+{
+    InitializeComponent();
+
+    LoadData();
+
+    BindingContext = this;
+}
+
+private void LoadData()
+{
+    Profiles = new ObservableCollection<Profile>
+    {
+        new Profile
+        {
+            Name = "Héctor",
+            ProfileImage = "profile1.jpg",
+            NoPhotos = 12
+        },
+        new Profile
+        {
+            Name = "Maddy",
+            ProfileImage = "profile2.jpg",
+            NoPhotos = 5,
+        },
+        new Profile
+        {
+            Name = "Henry",
+            ProfileImage = "profile3.jpg",
+            NoPhotos= 25
+        },
+    };
+
+    GeneratedImages = new ObservableCollection<GeneratedImage>
+    {
+        new GeneratedImage
+        {
+            ImagePath = "dashboard1.jpg",
+            MainKeyword = "Castle",
+            Keywords = new List<string>
+            {
+                "Epic, hill, mountain, trees, blue sky"
+            }
+        },
+        new GeneratedImage
+        {
+            ImagePath = "dashboard2.jog",
+            MainKeyword = "Mountains",
+            Keywords = new List<string>
+            {
+                "Landscape, photorealistic, dawn, mountains"
+            }
+        },
+        new GeneratedImage
+        {
+            ImagePath = "dashboard3.jpg",
+            MainKeyword = "Robot",
+            Keywords = new List<string>
+            {
+                "AI, robotic, huma, light, metal"
+            }
+        },
+    };
+}
+
+	-	As continuation of the DashboardViewPage, Creating the 'cards' or members with collectionView to use the classes data:
+
+{...}
+
+<!--    Other profiles section, using a collectionView for the data -->
+<CollectionView Grid.Row="2"
+                ItemsSource="{Binding Profiles}"
+                VerticalOptions="Center">
+    <CollectionView.ItemsLayout>
+        <LinearItemsLayout ItemSpacing="10"
+                           Orientation="Horizontal"/>
+    </CollectionView.ItemsLayout>
+    <CollectionView.ItemTemplate>
+        <DataTemplate>
+            <!-- Creating the background first and the 'card' display -->
+            <Grid ColumnDefinitions=".35*, .65*"
+                  HeightRequest="60"
+                  WidthRequest="160">
+                <RoundRectangle Grid.ColumnSpan="2"
+                                CornerRadius="45"
+                                Fill="#1F252A"/>
+                <Border Grid.RowSpan="2"
+                        Margin="5,0,0,0"
+                        HeightRequest="50"
+                        HorizontalOptions="Start"
+                        StrokeShape="RoundRectangle 80,80,80,80"
+                        StrokeThickness="0"
+                        WidthRequest="50">
+                    <Image HeightRequest="50"
+                           Source="{Binding ProfileImage}"/>
+                </Border>
+                <VerticalStackLayout Grid.Column="1"
+                                     VerticalOptions="Center">
+                    <Label Margin="10,0,0,0"
+                           FontFamily="NexaHeavy"
+                           HorizontalTextAlignment="Start"
+                           Text="{Binding Name}"
+                           TextColor="White"
+                           VerticalTextAlignment="Center"/>
+                    <Label Grid.Column="1"
+                           Margin="10,0,0,0"
+                           FontFamily="NexaHeavy"
+                           FontSize="12"
+                           Text="{Binding NoPhotos, StringFormat='{0} pictures'}"
+                           TextColor="#869CBD"
+                           VerticalOptions="Center"/>
+
+                </VerticalStackLayout>
+            </Grid>
+        </DataTemplate>
+    </CollectionView.ItemTemplate>
+</CollectionView>
+
+	-	For the section of the Cards with the appearance of a collection or image galery format, installing a nuget package: cardsview.maui
+
+	-	Add the namespace to the page, to be able to use it, and reference to the processors to be able to use certain effects:
+
+		xmlns:cards="clr-namespace:PanCardView;assembly=PanCardView"
+		xmlns:proc="clr-namespace:PanCardView.Processors;assembly=PanCardView">w"
+
+	-	And add it to the MauiProgram file to be build:
+
+	var builder = MauiApp.CreateBuilder();
+builder
+    .UseMauiApp<App>()
+    .UseCardsView()
+    .ConfigureFonts(fonts =>
+
+    -	In the DashboardView Page, implement the nuget package for the card images. After the members collection view:
+
+		{...}
+        <!--    Creating Card View section  -->
+    <cards:CoverFlowView Grid.Row="3"
+                         Margin="-25, 0, 25, 0"
+                         ItemsSource="{Binding GeneratedImages}"
+                         PositionShiftValue="125">
+        <x:Arguments>
+            <proc:CoverFlowProcessor OpacityFactor="0.25"
+                                     ScaleFactor="0.75"/>
+        </x:Arguments>
+
+        <cards:CoverFlowView.ItemTemplate>
+            <DataTemplate>
+                <Border StrokeShape="RoundRectangle 25, 25, 25, 25"
+                        StrokeThickness="0">
+                    <Grid RowDefinitions=".7*, .3*">
+                        <Image Grid.RowSpan="2"
+                               Aspect="AspectFill"
+                               Source="{Binding ImagePath}"/>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+        </cards:CoverFlowView.ItemTemplate>
+    </cards:CoverFlowView>
+</Grid>
+
+	-	And then, to show data aslong the images, Need to manipulate and convert the data in the classes (since its a List<string> data), adding and implementing the CommunityToolkit.maui and CommunityToolkit.maui.core for the previous work. And implement them on the MauiProgram file:
+
+	public static MauiApp CreateMauiApp()
+	{
+    var builder = MauiApp.CreateBuilder();
+    builder
+        .UseMauiApp<App>()
+        .UseCardsView()
+        .UseMauiCommunityToolkit()
+        .UseMauiCommunityToolkitCore()
+        .ConfigureFonts(fonts =>
+        {
+
+    -	And apply it to the DashboardView, aslong the instance of the convert that are insterested for the conversation:
+
+     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+
+	<ContentPage.Resources>
+	    <ResourceDictionary>
+	        <toolkit:ListToStringConverter x:Key="ListToStringConverter"
+	                                       Separator=","/>
+	    </ResourceDictionary>
+	</ContentPage.Resources>
+
+
+	-	Inside the collectionview above, along side with the image, implement the text needed:
+
+	    <cards:CoverFlowView.ItemTemplate>
+        <DataTemplate>
+            <Border StrokeShape="RoundRectangle 25, 25, 25, 25"
+                    StrokeThickness="0">
+                <Grid RowDefinitions=".7*, .3*">
+                    <Image Grid.RowSpan="2"
+                           Aspect="AspectFill"
+                           Source="{Binding ImagePath}"/>
+                    <Grid Grid.Row="1">
+                        <Rectangle Fill="Black"
+                                   Opacity=".5"
+                                   StrokeThickness="0"/>
+                        <VerticalStackLayout Margin="10, 0, 0, 0"
+                                             VerticalOptions="Center">
+                            <Label FontFamily="NexaHeavy"
+                                   FontSize="15"
+                                   Text="{Binding MainKeyword}"
+                                   TextColor="White"/>
+                            <Label FontFamily="NexaLight"
+                                   FontSize="15"
+                                   Text="{Binding Keywords,Converter={StaticResource ListToStringConverter}}"
+                                   TextColor="White"/>
+                        </VerticalStackLayout>
+                        
+                    </Grid>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </cards:CoverFlowView.ItemTemplate>
+</cards:CoverFlowView>
+
+
+-	For the last View step, is to create a bottum in the end of the page. Continuing with the dashboardView page:
+
+{...}
+    </cards:CoverFlowView>
+
+    <Border Grid.Row="4"
+            Margin="0, 15, 0, 0"
+            HorizontalOptions="End"
+            StrokeShape="RoundRectangle 55, 0, 0, 0"
+            WidthRequest="250">
+        <Button BackgroundColor="#E8FF8E"
+                FontFamily="NexaHeavy"
+                FontSize="16"
+                Text="Create new Image"
+                TextColor="#101216"/>
+    </Border>
+</Grid>
+
+285	-	Dallui App - Screen 2
+
+	-	Creating a new image. In the View create a new GenerationOptionsView and start to set the titles:
+
+	         Title="GenerationOptionsView"
+         BackgroundColor="#101216">
+	<Grid Margin="25, 25, 0, 0"
+	  RowDefinitions=".2*, .1*, .1*, .3*, .2*, .1">
+	    <VerticalStackLayout VerticalOptions="Center">
+	        <Label FontFamily="NexaHeavy"
+	               FontSize="30"
+	               Text="Select Options"
+	               TextColor="White" />
+	        <Label Margin="0, 10, 0, 0"
+	               FontSize="20"
+	               Text="Minimum of 6 options"
+	               TextColor="#ACB1BB"/>
+	    </VerticalStackLayout>
+	</Grid>
+
+	-	Creating a top sections to select the options, for that need to create some data or datamodel to process with a list. For an easy creation, on the code behind of the page:
+
+	public List<string> Options { get; set; }
+	public GenerationOptionsView()
+	{
+	    InitializeComponent();
+	    FillOptions();
+
+	    BindingContext = this;
+	}
+
+	private void FillOptions()
+	{
+	    Options = new List<string>
+	    {
+	        "World",
+	        "Winter",
+	        "LandScapes"
+	    };
+	}
+
+	-	Then to use the data, in the GeneratorOptionView add a collection view ti display the data:
+
+	{...}
+
+	 <CollectionView Grid.Row="1"
+                 ItemsSource="{Binding Options}">
+     <CollectionView.ItemsLayout>
+         <LinearItemsLayout ItemSpacing="10"
+                            Orientation="Horizontal"/>
+     </CollectionView.ItemsLayout>
+
+     <CollectionView.ItemTemplate>
+         <DataTemplate>
+             <Grid HeightRequest="50"
+                   WidthRequest="150">
+                 <RoundRectangle CornerRadius="35" Fill="#242529"/>
+                 <Label Text="{Binding .}"
+                        HorizontalOptions="Center"
+                        TextColor="White"
+                        VerticalOptions="Center"
+                        FontFamily="NexaLight"/>
+
+             </Grid>
+         </DataTemplate>
+     </CollectionView.ItemTemplate>
+ </CollectionView>
+
+ -	After the creation of the separator of options, create a collectionview layout of images:
+
+ 	{...}
+         <Label Grid.Row="2"
+               FontFamily="NexaHeavy"
+               FontSize="20"
+               Text="Choose a style of picture"
+               TextColor="White"
+               VerticalOptions="Center"/>
+
+        <!--    Create a class to show a collectiView of images -->
+
+        <CollectionView Grid.Row="3"
+                        ItemsSource="{Binding Styles}"
+                        SelectionMode="Single">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="10"
+                                   Orientation="Horizontal"/>
+            </CollectionView.ItemsLayout>
+
+	    <CollectionView.ItemTemplate>
+	        <DataTemplate>
+	            <Grid>
+	                <Border StrokeShape="RoundRectangle 20, 20 ,20 ,20" StrokeThickness="0">
+	                    <Image Source="{Binding ImageUrl}"/>
+	                </Border>
+	                <Label Margin="0,0,0,10"
+	                       FontFamily="NexaHeavy"
+	                       FontSize="15"
+	                       HorizontalOptions="Center"
+	                       Text="{Binding Name}"
+	                       TextColor="White"
+	                       VerticalOptions="End">
+	                    <Label.Shadow>
+	                        <Shadow Brush="black"
+	                                Opacity=".8"
+	                                Radius="1"
+	                                Offset="5,5"/>
+	                    </Label.Shadow>
+	                </Label>
+	            </Grid>
+	        </DataTemplate>
+	    </CollectionView.ItemTemplate>
+	</CollectionView>
+
+
+    -	To arrange the data for that collectionView, creating a ArtStyle class inside the models folder:
+
+        public class ArtStyle
+	    {
+	        public string Name { get; set; }
+	        public string ImageUrl { get; set; }
+	    }
+	}
+
+	-	In GenerationOptions view code behind, create an instance of that class and populate with data, taking advantage of the FillOptions method created before:
+
+		public List<ArtStyle> Styles { get; set; }
+
+		private void FillOptions()
+	{
+	    Options = new List<string>
+	    {
+	        "World",
+	        "Winter",
+	        "Land Scapes"
+	    };
+
+	    Styles = new List<ArtStyle>
+	    {
+	        new ArtStyle() {Name = "Cartoon", ImageUrl = "cartoon.jpg"},
+	        new ArtStyle() {Name = "Realistic", ImageUrl = "Realistic.jpg"},
+	        new ArtStyle() {Name = "Wathercolor Art", ImageUrl = "watercolor.jpg"},
+	        new ArtStyle() {Name = "Isometric", ImageUrl = "isometric.jpg"},
+	        new ArtStyle() {Name = "Pop Art", ImageUrl = "popart.jpg"},
+	        new ArtStyle() {Name = "Surrealism", ImageUrl = "surrealism.jpg"},
+	        new ArtStyle() {Name = "Minimalism", ImageUrl = "minimalism.jpg"},
+	        new ArtStyle() {Name = "Funko", ImageUrl = "funko.jpg"},
+	        new ArtStyle() {Name = "Anime", ImageUrl = "anime.jpg"},
+	        new ArtStyle() {Name = "Storybook", ImageUrl = "storybook.jpg"},
+	    };
+	}
+
+	-	For the ast part of the page, creating a editor for the description and the button (Couldn't not remove the default underline editor):
+
+		 <!--    Creating a discription area -->
+	 <Border Grid.Row="4"
+	         Margin="0, 15, 25, 0"
+	         BackgroundColor="#242529"
+	         StrokeShape="RoundRectangle 20, 20, 20, 20"
+	         StrokeThickness="0">
+	     <Editor Margin="5"
+	             BackgroundColor="#242529"
+	             TextColor="White"/>
+
+	 </Border>
+	 
+	 <!--    Creating the button in the end of the layout    -->
+	 <Button Grid.Row="5"
+	         BackgroundColor="#98C0FE"
+	         CornerRadius="25"
+	         HorizontalOptions="Center"
+	         Text="Generate"
+	         TextColor="Black"
+	         VerticalOptions="Center"/>
+
+	-	Changing the aspect of the editor
+
+		-	To change the default colors of the editor in the android, go to platforms folder, android, resources, values and select the colors file. Change the color of it:
+
+		<?xml version="1.0" encoding="utf-8"?>
+		<resources>
+		    <color name="colorPrimary">#512BD4</color>
+		    <color name="colorPrimaryDark">#2B0B98</color>
+		    <color name="colorAccent">#fff</color>
+		</resources>
+
+		-	To remove the editor under line in android. Add the code to the main constructor of the page:
+
+		    public GenerationOptionsView()
+    {
+        InitializeComponent();
+        FillOptions();
+
+        BindingContext = this;
+
+        Microsoft.Maui.Handlers.EditorHandler.Mapper.AppendToMapping("MyCustomization", (handler, view) =>
+        {
+#if ANDROID
+
+            handler.PlatformView.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Colors.Transparent.ToAndroid());
+#elif IOS || MACCATALYST
+         
+#elif WINDOWS
+
+#endif
+
+        });
+    }
+
+286	-	Dallui App - Screen 3
+
+	-	Creating the last view page, inside the View folder as ImageGeneratorView:
+
+	BackgroundColor="#101216">
+    
+    <!--    Creation of the layout  -->
+<Grid Margin="25, 25, 0, 0"
+  RowDefinitions=".2*, .6*, .2*">
+    <!--    Creation of the Tittles. '&#10;' it divides rows of text (multiplatform support)    -->
+    <VerticalStackLayout VerticalOptions="Center">
+        <Label FontFamily="NexaHeavy"
+               FontSize="30"
+               Text="Picture&#10; generated"
+               TextColor="White"/>
+
+        <Label Margin="0, 10, 0, 0"
+               FontSize="20"
+               Text="Time spent 30 seconds"
+               TextColor="#ACB1BB"/>
+    </VerticalStackLayout>
+
+    <Border Grid.Row="1"
+            StrokeShape="RoundRectangle 20, 20, 20, 20"
+            StrokeThickness="0">
+        <Image Aspect="AspectFill"
+                Source="cartoon.jpg"/>
+    </Border>
+    <Button Grid.Row="2"
+            BackgroundColor="#E8FF8E"
+            CornerRadius="35"
+            FontSize="25"
+            HeightRequest="75"
+            HorizontalOptions="Center"
+            Text="Finnish"
+            TextColor="#101216"
+            VerticalOptions="Center"
+            WidthRequest="250"/>
+
+</Grid>
+</ContentPage>
+
+	-	Now, for the animation while the image is being generators, Adding a asset from the lottiefiles and import it to the raw resources folder.
+
+	-	Then install a nuget package to work with the lottiefiles: skiasharp extended maui, including pre releases (using the older versions, mos trecent gives errors)
+
+	-	In MauiProgram adding the use of the nuget package:
+
+	var builder = MauiApp.CreateBuilder();
+builder
+    .UseMauiApp<App>()
+    .UseCardsView()
+    .UseMauiCommunityToolkit()
+    .UseMauiCommunityToolkitCore()
+    .UseSkiaSharp()
+    .ConfigureFonts(fonts =>
+    {
+
+    -	Then in the ImageGenerator view page, adding the extension to use the package nuget and create the animation after the vorder, and set the border to invisible:
+
+    x:Class="DalluiApp.MVVM.Views.ImageGeneratorView"
+xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+
+	{...}
+ <Border Grid.Row="1"
+         IsVisible="False"
+         StrokeShape="RoundRectangle 20, 20, 20, 20"
+         StrokeThickness="0">
+     <Image Aspect="AspectFill"
+             Source="cartoon.jpg"/>
+ </Border>
+ <!--    Creation of the animation -->
+ <skia:SKLottieView Grid.Row="1"
+                    IsAnimationEnabled="True"
+                    RepeatCount="-1"
+                    Source="robot.json"/>
+
+    {...}
+
+    -	In the makeup, while the image generator is processing some animations happens. The button doesn't appear, The animation image take some display changes and the seconds on the string get brigther. We set the button in the imagegeneratorview as:
+
+    <Button Grid.Row="2"
+        x:Name="btnFinish"
+        Clicked="btnFinish_Clicked"
+        BackgroundColor="#E8FF8E"
+        CornerRadius="35"
+        FontSize="25"
+        HeightRequest="75"
+        HorizontalOptions="Center"
+        Text="Finnish"
+        TextColor="#101216"
+        VerticalOptions="Center"
+        WidthRequest="250"
+        Scale="0.2"/>
+
+    -	With the event handlerscreated, now can change some properties of the rest of componenets. In the code behind:
+
+
+    private void btnFinish_Clicked(object sender, EventArgs e)
+    {
+        StopGeneration();
+    }
+
+    private void StopGeneration()
+    {
+        lottie.IsAnimationEnabled = false;
+        lottie.IsVisible = false;
+        imageBorder.IsVisible = true;
+    }
+
+    -	Creating a new border to over display over the image, to create a animation and setting a name to the skia animation in the ImageGeneratorView page:
+
+ 
+        <!--    Creating the image display  -->
+
+        <Border Grid.Row="1"
+                x:Name="imageBorder"
+                IsVisible="False"
+                StrokeShape="RoundRectangle 20, 20, 20, 20"
+                StrokeThickness="0">
+            <Image Aspect="AspectFill"
+                    Source="cartoon.jpg"/>
+        </Border>
+        
+        <!--    Creating the animation for the iamge (Same place as the image display to stay over it    -->
+        <Border Grid.Row="1"
+         x:Name="imageAnimation"
+         IsVisible="true"
+         BackgroundColor="#E8FF8E"
+         Opacity="0.8"
+         StrokeShape="RoundRectangle 20, 20, 20, 20"
+         StrokeThickness="0"/>
+        <!--    Creation of the animation -->
+        <skia:SKLottieView Grid.Row="1"
+                           IsAnimationEnabled="True"
+                           RepeatCount="-1"
+                           Source="robot.json"
+                           x:Name="lottie"/>
+
+    -	For the string that displays the seconds passed, need to separate them into parts to 'manipulate' one part of it. As such, in the ImageGenerator view page, changing the label in the tittle section:
+
+     <!--    Creation of the layout  -->
+ <Grid Margin="25, 25, 0, 0"
+   RowDefinitions=".2*, .6*, .2*">
+     <!--    Creation of the Tittles. '&#10;' it divides rows of text (multiplatform support)    -->
+     <VerticalStackLayout VerticalOptions="Center">
+         <Label FontFamily="NexaHeavy"
+                FontSize="30"
+                Text="Picture&#10; generated"
+                TextColor="White"/>
+
+         <HorizontalStackLayout Margin="0, 10, 0, 0">
+             <Label
+                 FontSize="20"
+                 Text="Time spent "
+                 TextColor="#ACB1BB"
+                 VerticalOptions="Center"/>
+             <Grid>
+                 <Border x:Name="borderTimer"
+                         Grid.Row="1"
+                         BackgroundColor="#E8FF8E"
+                         IsVisible="True"
+                         Opacity="0"
+                         Scale="1.1"
+                         StrokeShape="RoundRectangle 5, 5, 5, 5"
+                         StrokeThickness="0"/>
+                 <Label FontSize="20"
+                        Text="0"
+                        TextColor="#ACB1BB"
+                        VerticalOptions="Center"/>
+             </Grid>
+             <Label
+               FontSize="20"
+                 Text=" seconds"
+               TextColor="#ACB1BB"
+               VerticalOptions="Center"/>
+         </HorizontalStackLayout>
+     </VerticalStackLayout>
+
+
+    -	Then in code behind, to show and display the animations:
+
+    private async void StopGeneration()
+	{
+	    await Task.Delay(2000);
+
+	    lottie.IsAnimationEnabled = false;
+	    lottie.IsVisible = false;
+	    imageBorder.IsVisible = true;
+	    imageAnimation.IsVisible = true;
+
+	    //  Executes a series of animations
+	    await Task.WhenAny(
+	        imageAnimation.ScaleTo(1.1, 1000),
+	        imageAnimation.FadeTo(0, 1000),
+	        borderTimer.ScaleTo(1, 1000),
+	        borderTimer.FadeTo(1, 1000)
+	        );
+
+        await borderTimer.FadeTo(0, 300);
+		await btnFinish.ScaleTo(1, 1000);
+	}
+
+	-	Creating the timer and set its animation. Create a variable to measure the timer. In code behind:
+
+	//  Show how much time passed after the execution or generation of the image
+Stopwatch watch = new();
+
+	-	Then to implements the timer with the correspondent label display, setting the timer label a name to change its values in code behind. In the ImageGeneratorview, setting a name to the label:
+
+	{...}
+	    <Grid>
+        <Border x:Name="borderTimer"
+                Grid.Row="1"
+                BackgroundColor="#E8FF8E"
+                IsVisible="True"
+                Opacity="0"
+                Scale="1.1"
+                StrokeShape="RoundRectangle 5, 5, 5, 5"
+                StrokeThickness="0"/>
+        <Label FontSize="20"
+               x:Name="lblTimer"
+               Text="0"
+               TextColor="#ACB1BB"
+               VerticalOptions="Center"/>
+    </Grid>
+    <Label
+      FontSize="20"
+        Text=" seconds"
+      TextColor="#ACB1BB"
+      VerticalOptions="Center"/>
+</HorizontalStackLayout>
+
+	-	In code behind, setting a method first thing that the application starts, and execute the process of the animation and image geenration:
+
+	//  Action that does first thing app starts
+protected override async void OnAppearing()
+{
+    await Task.Delay(TimeSpan.FromSeconds(2));  //  Start to count after this delay was passed
+    watch.Start();
+
+    var cts = new CancellationTokenSource();
+
+    using (var timer = new PeriodicTimer(TimeSpan.FromSeconds(1)))  //  Executing a Task from every second
+    {
+        //  Setting a try section, to deal with cancelationToken
+        try
+        {
+            var counter = 0;
+            while (await timer.WaitForNextTickAsync(cts.Token)) //  Setting what happens every tick its executed
+            {
+                if (counter == 5)
+                {
+                    cts.Cancel();
+                }
+
+                var seconds = watch.Elapsed.Seconds;    //  Retrieve how much seconds as passed, to display
+                lblTimer.Text = seconds.ToString();
+                counter++;
+            }
+        }
+        catch(TaskCanceledException)
+        {
+            await StopGeneration();
+        }
+    }
+}
+
+	-	Adding Shell Navigation By myself.
+
+	-	In the MauiProgram adding the singleton build services to compile the pages:
+
+            builder.Services.AddSingleton<GenerationOptionsView>();
+            builder.Services.AddTransient<ImageGeneratorView>(); // Make It Transient, since will always show the view from the scrath
+
+    -	Setting the AppShell as the mainpage in the App.xaml.cs. And in AppShell view set the contentTemplate as the DashboardView:
+
+     xmlns:views="clr-namespace:DalluiApp.MVVM.Views"
+ Shell.FlyoutBehavior="Disabled">
+
+ <ShellContent
+     Title="Home"
+     ContentTemplate="{DataTemplate views:DashboardViewPage}"
+     Route="MainPage" />
+
+     -	In code behind, set the routes for the navigation through the others pages:
+
+                 Routing.RegisterRoute(nameof(GenerationOptionsView), typeof(GenerationOptionsView));
+
+            Routing.RegisterRoute(nameof(ImageGeneratorView), typeof(ImageGeneratorView));
+
+    -	In the DashboardView page, adding a click event to the button and set the navigaiton to the generationOptionsView page:
+
+        private async void Button_Clicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(nameof(GenerationOptionsView));
+    }
+
+    -	Doing the same to the generationOptionsView page, in this case for the imageGeneratorView:
+
+     private async void Button_Clicked(object sender, EventArgs e)
+	 {
+	     await Shell.Current.GoToAsync("/" + nameof(ImageGeneratorView));
+	 }
+
+	-	For the end, in the finnish button of the ImageGeneratorView, setting to go to the MainPage:
+
+	     private async void btnFinish_Clicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("../..");
+    }
+
+    -	Adding MVVM By Myself
+
+    -	Installing the CommunityToolkit.Mvvm nuget package. In the MauiProgram, add the nuged:
+
+     public static MauiApp CreateMauiApp()
+ {
+     var builder = MauiApp.CreateBuilder();
+     builder
+         .UseMauiApp<App>()
+         .UseCardsView()
+         .UseMauiCommunityToolkit()
+         .UseMauiCommunityToolkitCore()
+         .UseSkiaSharp()
+         .ConfigureFonts(fonts =>
+         {
+
+    -	Create a DashboardViewPageViewModel for the DashboardView, and in the MauiProgram also add its Singleton services:
+
+            builder.Services.AddSingleton<DashboardViewPage>();
+            builder.Services.AddSingleton<DashboardViewPageViewModel>();
+
+	-	Only update the Button event/command on the DashboardViewPage xaml to the able to use it in the DashoardViewModel:
+
+	    <!--    Creating the end button -->
+    <Border Grid.Row="4"
+            Margin="0, 15, 0, 0"
+            HorizontalOptions="End"
+            StrokeShape="RoundRectangle 55, 0, 0, 0"
+            WidthRequest="250">
+        <Button BackgroundColor="#E8FF8E"
+                FontFamily="NexaHeavy"
+                FontSize="16"
+                Text="Create new Image"
+                TextColor="#101216"
+                Command="{Binding NextPageCommand}"/>
+    </Border>
+</Grid>
+
+	-	In the DashboardViewPage code behind, only bind the ViewModel and set the LoadData from its ViewModel:
+
+	public DashboardViewPage(DashboardViewPageViewModel dvm)
+	{
+    InitializeComponent();
+
+    dvm.LoadDataStart();
+
+    //ProfilesData(dvm); GeneratedImagesData(dvm);
+
+    BindingContext = dvm;
+	}
+
+	-	Setting all the Models as observableObjects and ObservableProperty. For instance, for the GeneratedImage:
+
+	    public partial class GeneratedImage : ObservableObject
+    {
+        [ObservableProperty]
+        public string imagePath;
+        [ObservableProperty]
+        public string mainKeyword;
+
+        [ObservableProperty]
+        public List<string> keywords;
+    }
+
+	-	Then set the DashboardViewPAgeViewModel as partial and an ObservableObject with all the process:
+
+	public partial class DashboardViewPageViewModel : ObservableObject
+{
+    [ObservableProperty]
+    public ObservableCollection<Profile> profiles;
+    [ObservableProperty]
+    public ObservableCollection<GeneratedImage> generatedImages;
+
+    public DashboardViewPageViewModel()
+    {
+        profiles = new ObservableCollection<Profile>();
+        generatedImages = new ObservableCollection<GeneratedImage>();
+    }
+
+    public void LoadDataStart() { LoadData(); }
+
+    private void LoadData()
+    {
+        Profiles = new ObservableCollection<Profile>
+    {
+        new Profile
+        {
+            Name = "Héctor",
+            ProfileImage = "profile1.jpg",
+            NoPhotos = 12
+        },
+        new Profile
+        {
+            Name = "Maddy",
+            ProfileImage = "profile2.jpg",
+            NoPhotos = 5,
+        },
+        new Profile
+        {
+            Name = "Henry",
+            ProfileImage = "profile3.jpg",
+            NoPhotos= 25
+        },
+    };
+
+        GeneratedImages = new ObservableCollection<GeneratedImage>
+    {
+        new GeneratedImage
+        {
+            ImagePath = "dashboard1.jpg",
+            MainKeyword = "Castle",
+            Keywords = new List<string>
+            {
+                "Epic, hill, mountain, trees, blue sky"
+            }
+        },
+        new GeneratedImage
+        {
+            ImagePath = "dashboard2.jpg",
+            MainKeyword = "Mountains",
+            Keywords = new List<string>
+            {
+                "Landscape, photorealistic, dawn, mountains"
+            }
+        },
+        new GeneratedImage
+        {
+            ImagePath = "dashboard3.jpg",
+            MainKeyword = "Robot",
+            Keywords = new List<string>
+            {
+                "AI, robotic, huma, light, metal"
+            }
+        },
+    };
+    }
+        //public async Task<ObservableCollection<Profile>> RetrieveProfilessData()
+        //{
+        //     return Profiles;
+        //}
+
+        //public async Task<ObservableCollection<GeneratedImage>> RetrieveGeneratedImagesData()
+        //{
+        //     return GeneratedImages;
+        //}
+
+    [RelayCommand]
+    async Task NextPage() => await Shell.Current.GoToAsync(nameof(GenerationOptionsView));
+	}
+
+	-	Applying the MVVM communityToolkit to the second page and create the GenerationsOptionsViewModel.
+
+	-	Comment all the process of the GenerationOptions view code behind, setting only the binding to the new GenerationOptions ViewModel:
+
+	    public GenerationOptionsView(GenerationOptionsViewModel givm)
+    {
+        InitializeComponent();
+        //FillOptions();
+
+        BindingContext = givm;
+    }
+
+    In the view, Set the button with the binding command:
+
+    <!--    Creating the button in the end of the layout    -->
+    <Button Grid.Row="5"
+            BackgroundColor="#98C0FE"
+            CornerRadius="25"
+            HorizontalOptions="Center"
+            Text="Generate"
+            TextColor="Black"
+            VerticalOptions="Center"
+            Command="{Binding GenerateImageCommand}"/>
+
+</Grid>
+
+-	Then in the GenerationOptionsViewmodel, set all the process and properties innitializations:
+
+public partial class GenerationOptionsViewModel : ObservableObject
+{
+    [ObservableProperty]
+    public List<string> options;
+    [ObservableProperty]
+    public List<ArtStyle> styles;
+    [ObservableProperty]
+    object stack;
+    public GenerationOptionsViewModel()
+    {
+        Options = new();
+        styles = new List<ArtStyle>();
+
+        FillOptions();
+    }
+    private void FillOptions()
+    {
+        Options = new List<string>
+    {
+        "World",
+        "Winter",
+        "Land Scapes"
+    };
+
+        Styles = new List<ArtStyle>
+    {
+        new ArtStyle() {Name = "Cartoon", ImageUrl = "cartoon.jpg"},
+        new ArtStyle() {Name = "Realistic", ImageUrl = "Realistic.jpg"},
+        new ArtStyle() {Name = "Wathercolor Art", ImageUrl = "watercolor.jpg"},
+        new ArtStyle() {Name = "Isometric", ImageUrl = "isometric.jpg"},
+        new ArtStyle() {Name = "Pop Art", ImageUrl = "popart.jpg"},
+        new ArtStyle() {Name = "Surrealism", ImageUrl = "surrealism.jpg"},
+        new ArtStyle() {Name = "Minimalism", ImageUrl = "minimalism.jpg"},
+        new ArtStyle() {Name = "Funko", ImageUrl = "funko.jpg"},
+        new ArtStyle() {Name = "Anime", ImageUrl = "anime.jpg"},
+        new ArtStyle() {Name = "Storybook", ImageUrl = "storybook.jpg"},
+    };
+    }
+
+    [RelayCommand]
+    async Task GenerateImage() => await Shell.Current.GoToAsync("/" + nameof(ImageGeneratorView));
+}
+
+-	In the Case of the ImageGeneratorView pages, part of the code if done by code behind, that controls the some of the view properties, and the other part will be done by binding to the its ViewModel:
+
+	-	Creating a ImageGeneratorViewModel, Set the properties that need to be binded to the view, using the MVVM community toolkits and using the task for synchronization:
+
+	    public partial class ImageGeneratorViewModel: ObservableObject
+    {
+        [ObservableProperty]
+        List<string> imagesRndm;
+        [ObservableProperty]
+        Random rndm = new();
+        [ObservableProperty]
+        public string imageValue;
+
+
+        public ImageGeneratorViewModel()
+        {
+            imagesRndm = new List<string>();
+
+            List<Task> multipleTask = new();
+
+            multipleTask.Add(Task.Run(() => ImageData()));
+
+            multipleTask.Add(Task.Run(() => GenerateRandomImage()));
+
+            Task.WhenAll(multipleTask);
+
+            //ImageData();
+
+            //ImageRndm();
+        }
+        void ImageData()
+        {
+            ImagesRndm = new List<string>
+        {
+            {"cartoon.jpg"},
+            {"anime.jpg"},
+            {"dashboard3.jpg"},
+            {"profilesquare.jpg"},
+            {"profile1.jpg"},
+            {"profile2.jpg"},
+            {"profile3.jpg"},
+            {"funko.jpg"},
+            {"realistic.jpg"},
+        };
+        }
+        public async Task GenerateRandomImage()
+        {
+            await ImageCalculator();
+        }
+
+        private async Task ImageCalculator()
+        {
+            await Task.Delay(0);
+            var t = Task.Run(() => { ImageValue = ImagesRndm[Rndm.Next(ImagesRndm.Count)]; });
+
+            //  Value = t.ToString();
+            //  Value = await Task.Run ImagesRndm[Rndm.Next(ImagesRndm.Count)];
+        }
+
+        //public async Task<string> ReturnValue()
+        //{
+        //    await Task.Delay(0);
+        //    return ImageValue.ToString();
+        //}
+
+        [RelayCommand]
+        async Task Finnish() => await Shell.Current.GoToAsync("../..");
+    }
+}
+
+	-	In the ImageGeneratorView View XAML code, making some changes and set the bindings:
+
+	             xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             Title="ImageGeneratorView"
+             BackgroundColor="#101216">
+    
+    <!--    Creation of the layout  -->
+    <Grid Margin="25, 25, 0, 0"
+      RowDefinitions=".2*, .6*, .2*">
+        <!--    Creation of the Tittles. '&#10;' it divides rows of text (multiplatform support)    -->
+        <VerticalStackLayout VerticalOptions="Center">
+            <Label FontFamily="NexaHeavy"
+                   FontSize="30"
+                   Text="Picture&#10; generated"
+                   TextColor="White"/>
+
+            <HorizontalStackLayout Margin="0, 10, 0, 0">
+                <Label
+                    FontSize="20"
+                    Text="Time spent "
+                    TextColor="#ACB1BB"
+                    VerticalOptions="Center"/>
+                <Grid>
+                    <Border x:Name="borderTimer"
+                            Grid.Row="1"
+                            BackgroundColor="#E8FF8E"
+                            IsVisible="True"
+                            Opacity="0"
+                            Scale="1.1"
+                            StrokeShape="RoundRectangle 5, 5, 5, 5"
+                            StrokeThickness="0"/>
+                    <Label FontSize="20"
+                           x:Name="lblTimer"
+                           Text="0"
+                           TextColor="#ACB1BB"
+                           VerticalOptions="Center"/>
+                </Grid>
+                <Label
+                  FontSize="20"
+                    Text=" seconds"
+                  TextColor="#ACB1BB"
+                  VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+        
+        <!--    Creating the image display  -->
+
+        <Border Grid.Row="1"
+                x:Name="imageBorder"
+                IsVisible="False"
+                StrokeShape="RoundRectangle 20, 20, 20, 20"
+                StrokeThickness="0">
+            <Image Aspect="AspectFill"
+                    Source="{Binding ImageValue}"/>
+        </Border>
+        
+        <!--    Creating the animation for the image (Same place as the image display to stay over it    -->
+        <Border Grid.Row="1"
+         x:Name="imageAnimation"
+         IsVisible="False"
+         BackgroundColor="#E8FF8E"
+         Opacity="0.8"
+         StrokeShape="RoundRectangle 20, 20, 20, 20"
+         StrokeThickness="0"/>
+        <!--    Creation of the animation -->
+        <skia:SKLottieView Grid.Row="1"
+                           IsAnimationEnabled="True"
+                           RepeatCount="-1"
+                           Source="robot.json"
+                           x:Name="lottie"/>
+        
+        <Button Grid.Row="2"
+                x:Name="btnFinish"
+                BackgroundColor="#E8FF8E"
+                CornerRadius="35"
+                FontSize="25"
+                HeightRequest="75"
+                HorizontalOptions="Center"
+                Text="Finnish"
+                TextColor="#101216"
+                VerticalOptions="Center"
+                WidthRequest="250"
+                Scale="0"
+                Command="{Binding FinnishCommand}"/>
+
+    </Grid>
+</ContentPage>
+
+	-	In the View Code behind, setting some of the view properties, while view is binding to the ViewModel:
+
+	public partial class ImageGeneratorView : ContentPage
+{
+    //  Show how much time passed after the execution or generation of the image
+    Stopwatch watch = new();
+    //string[] randomImages = { "anime.jpg", "cartoon.jpg", "dashboard3.jpg", "funko.jpg", "profile1.jpg", "profile2.jpg", "profile3.jpg", "profilesquare.jpg", "realistic.jpg" };
+    //Random rndm = new Random();
+    public ImageGeneratorView(ImageGeneratorViewModel imageRndm)
+    {
+        InitializeComponent();
+
+        // ImageRndm = new();
+        BindingContext = imageRndm;
+    }
+
+    //  Action that does first thing app starts
+    protected override async void OnAppearing()
+    {
+        await Task.Delay(TimeSpan.FromSeconds(2));  //  Start to count after this delay was passed
+        watch.Start();
+
+        var cts = new CancellationTokenSource();
+
+        using (var timer = new PeriodicTimer(TimeSpan.FromSeconds(1)))  //  Executing a Task from every second
+        {
+            //  Setting a try section, to deal with cancelationToken
+            try
+            {
+                var counter = 0;
+                while (await timer.WaitForNextTickAsync(cts.Token)) //  Setting what happens every tick its executed
+                {
+                    if (counter >= 3)
+                    {
+                        cts.Cancel();
+                    }
+
+                    var seconds = watch.Elapsed.Seconds;    //  Retrieve how much seconds as passed, to display
+                    lblTimer.Text = seconds.ToString();
+                    counter++;
+                }
+            }
+            catch(TaskCanceledException)
+            {
+                //imageRndm = randomImages[rndm.Next(randomImages.Length)];
+                await StopGeneration();
+            }
+        }
+    }
+
+    private async Task StopGeneration()
+    {
+        watch.Stop();
+
+        await Task.Delay(2000);
+
+        //await ImageRndm.GenerateRandomImage();
+
+        //  ImageValue = await ImageRndm.ReturnValue();
+
+        lottie.IsAnimationEnabled = false;
+        lottie.IsVisible = false;
+        imageBorder.IsVisible = true;
+        imageAnimation.IsVisible = true;
+
+        //  Executes a series of animations
+        await Task.WhenAny(
+            imageAnimation.ScaleTo(1.1, 1000),
+            imageAnimation.FadeTo(0, 1000),
+            borderTimer.ScaleTo(1, 1000),
+            borderTimer.FadeTo(1, 1000)
+            );
+
+
+        await borderTimer.FadeTo(0, 300);
+        await btnFinish.ScaleTo(1, 1000);
+
+    }
+
+    -	Applying Dark/Lgith theme to the app 
+
+    -	Creating the AppStyle ResourceDictionary and adding the resource of it to the App.xaml:
+
+     <ResourceDictionary Source="Resources/Styles/AppStyles.xaml" />
+
+    -	Then Removing     <!--                 BackgroundColor="#101216"  Applied in styles   --> from all the pages, and apply I the AppStyles a style that affects its ContentPage diveriations to apply a background color. And others properties changes:
+
+    <!--    Creating a style for the dark and light theme. Need to apply ApplyToDerivedTypes="True" for its derivated types be also apllied -->
+<Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+    <Setter Property="BackgroundColor" Value="{AppThemeBinding Dark={StaticResource bgDarkTheme}, Light={StaticResource bgLightTheme}}"/>
+</Style>
+
+<Style TargetType="Rectangle" ApplyToDerivedTypes="False">
+    <Setter Property="Fill" Value="{AppThemeBinding Dark={StaticResource DarkModeRectangleMenu}, Light={StaticResource LightModeRectangleMenu}}"/>
+</Style>
+
+<Style TargetType="RoundRectangle" ApplyToDerivedTypes="False">
+    <Setter Property="Fill" Value="{AppThemeBinding Dark={StaticResource DarkModeRoundRectangleCardDisplay}, Light={StaticResource LightModeRoundRectangleCardDisplay}}"/>
+</Style>
+
+<Style TargetType="Label" x:Key="LblTitle">
+    <Setter Property="TextColor" Value="{AppThemeBinding Dark={StaticResource DarkThemeTitle}, Light={StaticResource LightThemeTitle}}"/>
+</Style>
+
+<Style TargetType="Label" x:Key="LblSubTitle">
+    <Setter Property="TextColor" Value="{AppThemeBinding Dark={StaticResource DarkThemeSubTitle}, Light={StaticResource LightThemeSubTitle}}"/>
+</Style>
+
+	-	In Colors files, aplying the colors:
+
+	    <Color x:Key="bgDarkTheme">#101216</Color>
+    <Color x:Key="bgLightTheme">#ECE0D3</Color>
+    <Color x:Key="DarkModeRectangleMenu">#CACDD3</Color>
+    <Color x:Key="LightModeRectangleMenu">#1F1F1F</Color>
+    <Color x:Key="DarkModeRoundRectangleCardDisplay">#1F252A</Color>
+    <Color x:Key="LightModeRoundRectangleCardDisplay">#54412E</Color>
+    <Color x:Key="LightThemeTitle">#907559</Color> 
+    <Color x:Key="DarkThemeTitle">#ACB1BB</Color> 
+    <Color x:Key="LightThemeSubTitle">#675440</Color>
+    <Color x:Key="DarkThemeSubTitle">#ACB1BB</Color>
+
+    -	Removed the Colors of the Rectangle properties in the DashboardViewPage and let to be apllied by the global style in AppStyles.
+
+    -	Also in the DashboardViewPage, since the label will be used along with the project created a specific style to be used in some cases. And applied like:
+
+     <!--    Set the titles  -->
+ <VerticalStackLayout Grid.Row="1"
+                      VerticalOptions="Center">
+     <Label FontSize="30"
+            FontFamily="Nexa-Heavy"
+            Text="Create incredible universes"
+            Style="{StaticResource LblTitle}"/>
+
+     <Label FontSize="20"
+            FontFamily="Nexa-Heavy"
+            Margin="0, 10, 0, 0"
+            Text="Join your friends."
+            Style="{StaticResource LblSubTitle}"/>
+ </VerticalStackLayout>
+
+ 	-	Apply the same color styles to the rest of the application. In the GenerationOptionsView and in ImageGeneratorView.
+
+
+-	Applying Acrylic/Blur to image cards.
+
+	-	Aplying an alternative with: https://www.sharpnado.com/materialframe-maui/
+
+	-	Installing the nuget package Sharpnado.MaterialFrame.Maui, that also brings errors, so it also needs the nuget package: Sharpnado.TaskMonitor
+
+	-	In the MauiProgram file, add:
+
+	.UseSharpnadoMaterialFrame(loggerEnable: false)
+
+	-	Can define a style for the use of sharpnado.MaterialFrame. In the AppStyle adding the name space and create a style for it:
+
+		xmlns:sharpnado="clr-namespace:Sharpnado.MaterialFrame;assembly=Maui.MaterialFrame">
+
+		 <Style TargetType="sharpnado:MaterialFrame">
+		     <Setter Property="MaterialTheme" Value="AcrylicBlur"/>
+		     <Setter Property="MaterialBlurStyle" Value="Dark"/>
+		 </Style>
+
+	-	Then apply it to the view (with the correct namespace for it). Can't apply it to a control. It is a control by itself. So, replacing the Grid and the rectangle controls:
+
+	xmlns:acrylicview="clr-namespace:Sharpnado.MaterialFrame;assembly=Maui.MaterialFrame">
+
+	{...}
+
+	    <cards:CoverFlowView.ItemTemplate>
+	        <DataTemplate>
+	            <Border StrokeShape="RoundRectangle 40, 40, 40, 40"
+	                    StrokeThickness="0">
+	                <Grid RowDefinitions=".7*, .3*">
+	                    <Image Grid.RowSpan="2"
+	                           Aspect="AspectFill"
+	                           Source="{Binding ImagePath}"/>
+	                    <acrylicview:MaterialFrame Grid.Row="1">
+	                    <!--<Grid Grid.Row="1">
+	                        <Rectangle Fill="Black"
+	                                   Opacity=".5"
+	                                   StrokeThickness="0"/>-->
+	                        <VerticalStackLayout Margin="10, 0, 0, 0"
+	                                             VerticalOptions="Center">
+	                            <Label FontFamily="NexaHeavy"
+	                                   FontSize="15"
+	                                   Text="{Binding MainKeyword}"
+	                                   TextColor="White"/>
+	                            <Label FontFamily="NexaLight"
+	                                   FontSize="15"
+	                                   Text="{Binding Keywords,Converter={StaticResource ListToStringConverter}}"
+	                                   TextColor="White"/>
+	                        </VerticalStackLayout>
+
+	                    </acrylicview:MaterialFrame>
+	                </Grid>
+	            </Border>
+	        </DataTemplate>
+	    </cards:CoverFlowView.ItemTemplate>
+	</cards:CoverFlowView>
+
+	{...}
+	
+
+	287	-	Fruit App Screen Challenge
+
+		-	First importing the font types needed. Adding them into Fonts folder. and in the MauiProgram file:
+
+		 public static MauiApp CreateMauiApp()
+ 		{
+     var builder = MauiApp.CreateBuilder();
+     builder
+         .UseMauiApp<App>()
+         .ConfigureFonts(fonts =>
+         {
+             fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+             fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+             fonts.AddFont("Cheese-Matcha.ttf", "CheeseMatcha");
+             fonts.AddFont("MilkyVintage-Regular.ttf", "MilkyVintage");
+         });
+
+        -	Adding a image to the Images.
+
+        -	In the App.xaml.cs, change the initial page to the MainPage:
+        public App()
+		{
+		    InitializeComponent();
+
+		    MainPage = new MainPage();
+		}
+
+		-	Adding a gradient, to set a double background color. In the MainPage:
+
+		    <ContentPage.Background>
+		        <LinearGradientBrush EndPoint="0,1">
+		            <GradientStop Offset="0.1" Color="#FFCC33"/>
+		            <GradientStop Offset="1.0" Color="#FCBC03"/>
+		        </LinearGradientBrush>
+		    </ContentPage.Background>
+			
+			-	Creating a grid over the background gradient and its derivated layouts:
+
+			<!--    Making a grid over the gradient background  -->
+			<Grid Margin="25"
+			      RowDefinitions=".2*, .4*, .4*">
+
+			    <!--    Adding a background image to the grid background    -->
+			    <Image Grid.RowSpan="3"
+			           HorizontalOptions="Center"
+			           Source="papaya.png"
+			           VerticalOptions="Center"/>
+
+			    <VerticalStackLayout VerticalOptions="End">
+			        <Label FontFamily="MilkyVintage"
+			               FontSize="45"
+			               HorizontalOptions="Center"
+			               Text="PAPAYA"/>
+
+			        <Label Margin="0, 20, 0, 0"
+			               FontAttributes="Bold"
+			               FontFamily="CheeseMatcha"
+			             FontSize="20"
+			             HorizontalOptions="Center"
+			             Text="100 grams"/>
+			    </VerticalStackLayout>
+
+			    <!--    Creating an acrylic control, installing AcrylicView.Maui nuget package and refering it above    -->
+			    <acrylic:AcrylicView Grid.Row="2"
+			                         CornerRadius="20"
+			                         EffectStyle="Custom"
+			                         VerticalOptions="Center"
+			                         TintColor="#FCE7A7"
+			                         TintOpacity=".1">
+
+			        <!--    instead of creating a grid and adding more rows and columns accounding to the data
+			        Adding a verticalLayuout that will be fulfiled with the data in a grid   -->
+			        <VerticalStackLayout Padding="35"
+			                             VerticalOptions="Center"
+			                             BindableLayout.ItemsSource="{Binding PapayaInfo}">
+			            <BindableLayout.ItemTemplate>
+			                <DataTemplate>
+			                    <Grid Margin="0, 10, 0, 0"
+			                          ColumnDefinitions=".6*, .4*">
+			                        <Label FontFamily="CheeseMatcha"
+			                               FontSize="20"
+			                               Text="{Binding MicroNutrient}"/>
+			                        <Label Grid.Column="1"
+			                            FontFamily="MilkyVintage"
+			                               FontSize="20"
+			                               HorizontalTextAlignment="End"
+			                               Text="{Binding Percentage, StringFormat='{0} %'}"/>
+			                    </Grid>
+			                </DataTemplate>
+			            </BindableLayout.ItemTemplate>
+			            
+			        </VerticalStackLayout>
+			                         
+			                         
+			                         </acrylic:AcrylicView>  
+			</Grid>
+
+
+		-	Since this application doesn't need to change label text colors, change it in the Styles file, the color to only white:
+
+
+		 <Style TargetType="Label">
+		     <Setter Property="TextColor" Value="White" />
+		     {...}
+
+		-	Creating a Models folder, to the creation of the FruitInformation class, so simulate the Fruits data lists:
+
+		    public class FruitInfo
+		    {
+		        public string MicroNutrient { get; set; }
+		        public int Percentage { get; set; }
+		    }
+
+		-	Populate the list in the MainPage background code:
+
+		public partial class MainPage : ContentPage
+		{
+		    public List<FruitInfo> PapayaInfo { get; set; }
+
+		    public MainPage()
+		    {
+		        InitializeComponent();
+		        PapayaInfo = new List<FruitInfo> { 
+		        new FruitInfo
+		        {
+		            MicroNutrient = "Vitamin C", 
+		            Percentage = 101,
+		        },
+		        new FruitInfo
+		        {
+		            MicroNutrient = "Vitamin A",
+		            Percentage = 19
+		        },
+		        new FruitInfo
+		        {
+		            MicroNutrient = "Calcium",
+		            Percentage = 2
+		        },
+		        new FruitInfo
+		        {
+		            MicroNutrient = "Magnesium",
+		            Percentage= 5
+		        },
+		        new FruitInfo
+		        {
+		            MicroNutrient = "Potassium",
+		            Percentage = 5
+		        },
+		        };
+		        this.BindingContext = this;
+
+    		}
+
+    	-	Then, using it, through the binding elements, in XAML MainPage.
